@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="bronze_spice">#CC5803</color>
+    <color name="chocolate">#E2711D</color>
+    <color name="deep_saffron">#FF9505</color>
+    <color name="amber_flame">#FFB627</color>
+    <color name="sunfower_gold">#FFC971</color>
+    <color name="grey">#CACFD6</color>
+</resources>

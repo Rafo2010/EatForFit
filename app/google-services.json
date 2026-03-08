@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "754147251908",
+    "project_id": "eatforfitbase",
+    "storage_bucket": "eatforfitbase.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754147251908:android:c6c3161c78c4e55202db91",
+        "android_client_info": {
+          "package_name": "rafayel.hakobyan.project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBghGp1MZFzBiG5UGS0Erq-1GTTraF3HFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
