@@ -16,7 +16,6 @@
             android:layout_height="wrap_content"
             android:padding="24dp">
 
-            <!-- WELCOME CARD -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/welcome"
                 android:layout_width="0dp"
@@ -73,7 +72,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- FORM CARD -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/formCard"
                 android:layout_width="0dp"
@@ -92,13 +90,12 @@
                     android:orientation="vertical"
                     android:padding="24dp">
 
-                    <!-- Step indicator -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="16dp">
+                        android:layout_marginBottom="20dp">
 
                         <View
                             android:id="@+id/stepDot1"
@@ -124,19 +121,263 @@
 
                     </LinearLayout>
 
-                    <!-- Progress bar -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="4dp"
-                        android:background="#EEEEEE"
-                        android:layout_marginBottom="20dp">
-                    </View>
-
-                    <FrameLayout
-                        android:id="@+id/frl"
+                    <LinearLayout
+                        android:id="@+id/step1Layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="250dp"/>
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/emailLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Email"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp"
+                            app:startIconDrawable="@drawable/ic_email"
+                            app:startIconTint="@null">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="48dp"
+                                android:inputType="textEmailAddress"
+                                android:minHeight="56dp"
+                                android:textColor="#FF000000"
+                                android:autofillHints="emailAddress"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/passwordLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Password"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp"
+                            app:endIconMode="password_toggle"
+                            app:errorEnabled="true"
+                            app:startIconDrawable="@drawable/ic_lock"
+                            app:startIconTint="@null">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="48dp"
+                                android:inputType="textPassword"
+                                android:minHeight="56dp"
+                                android:textColor="#FF000000"
+                                android:autofillHints="password"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/confirmPasswordLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Confirm Password"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp"
+                            app:endIconMode="password_toggle"
+                            app:errorEnabled="true"
+                            app:startIconDrawable="@drawable/ic_lock"
+                            app:startIconTint="@null">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etConfirmPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="48dp"
+                                android:inputType="textPassword"
+                                android:imeOptions="actionDone"
+                                android:minHeight="56dp"
+                                android:textColor="#FF000000"
+                                android:autofillHints="password"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/step2Layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/nameLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Full Name"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:minHeight="56dp"
+                                android:textColor="#FF000000"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/weightLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Weight"
+                            app:suffixText="kg"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etWeight"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal"
+                                android:minHeight="56dp"
+                                android:textColor="#FF000000"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/heightLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Height"
+                            app:suffixText="cm"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etHeight"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal"
+                                android:minHeight="56dp"
+                                android:textColor="#FF000000"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ageLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Age"
+                            app:suffixText="years"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etAge"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:minHeight="56dp"
+                                android:textColor="#FF000000"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/diseaseLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Medical Condition (optional)"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/etDisease"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:minHeight="56dp"
+                                android:inputType="none"
+                                android:focusable="false"
+                                android:cursorVisible="false"
+                                android:textColor="#FF000000"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="🏃 Physical Activity Level"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="#FF000000"
+                            android:layout_marginBottom="6dp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/activityLayout"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:hint="Activity Level"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/etActivity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:minHeight="56dp"
+                                android:inputType="none"
+                                android:focusable="false"
+                                android:cursorVisible="false"
+                                android:textColor="#FF000000"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            android:id="@+id/tvActivityDesc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Gym or sports 3-4 times per week"
+                            android:textSize="12sp"
+                            android:textColor="#888888"
+                            android:textStyle="italic"
+                            android:layout_marginBottom="4dp"/>
+
+                    </LinearLayout>
 
                     <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/termsCheckbox"
@@ -144,12 +385,12 @@
                         android:layout_height="wrap_content"
                         android:text="I agree to Terms and Conditions"
                         android:textSize="13sp"
-                        android:layout_marginTop="16dp"/>
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone"/>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- BUTTONS -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -197,7 +438,6 @@
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF5E6"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Meal Plan"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/bronze_spice"/>
+
+                <TextView
+                    android:id="@+id/tvPlanDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/grey"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tvGoalType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/bronze_spice"
+                    android:background="#FFF0D6"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/sunfower_gold"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvGoalSummary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/bronze_spice"
+                    android:layout_marginBottom="4dp"/>
+
+                <TextView
+                    android:id="@+id/tvTotalPlanCal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/grey"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:indeterminateTint="@color/bronze_spice"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tvEmptyState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="#FFFFFF"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="Generate a personalized meal plan based on your goals."
+            android:textColor="#757575"
+            android:textSize="14sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGeneratePlan"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="✨  Generate My Meal Plan"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"
+            app:backgroundTint="@color/bronze_spice"
+            app:cornerRadius="28dp"
+            app:elevation="4dp"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardPlanContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- BREAKFAST -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🌅"
+                            android:textSize="22sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Breakfast"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/bronze_spice"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="7:00 – 9:00 AM"
+                                android:textSize="11sp"
+                                android:textColor="@color/grey"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvBreakfastCal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:background="@color/bronze_spice"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutBreakfast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="8dp" android:background="#FFF5E6"/>
+
+                <!-- LUNCH -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="☀️"
+                            android:textSize="22sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Lunch"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/bronze_spice"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="12:00 – 2:00 PM"
+                                android:textSize="11sp"
+                                android:textColor="@color/grey"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvLunchCal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:background="@color/bronze_spice"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutLunch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="8dp" android:background="#FFF5E6"/>
+
+                <!-- DINNER -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🌙"
+                            android:textSize="22sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Dinner"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/bronze_spice"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="6:00 – 8:00 PM"
+                                android:textSize="11sp"
+                                android:textColor="@color/grey"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvDinnerCal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:background="@color/bronze_spice"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutDinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="8dp" android:background="#FFF5E6"/>
+
+                <!-- SNACKS -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🍎"
+                            android:textSize="22sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Snacks"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/bronze_spice"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Between meals"
+                                android:textSize="11sp"
+                                android:textColor="@color/grey"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvSnacksCal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:background="@color/bronze_spice"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutSnacks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- TIPS CARD -->
+        <LinearLayout
+            android:id="@+id/layoutTips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="#FFF0D6"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💡"
+                android:textSize="20sp"
+                android:layout_marginEnd="10dp"/>
+
+            <TextView
+                android:id="@+id/tvTips"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="12sp"
+                android:textColor="@color/chocolate"
+                android:lineSpacingExtra="3dp"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegeneratePlan"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="🔄  Regenerate Plan"
+            android:textColor="@color/bronze_spice"
+            android:textSize="14sp"
+            android:textAllCaps="false"
+            android:layout_marginBottom="24dp"
+            app:backgroundTint="#FFF0D6"
+            app:strokeColor="@color/bronze_spice"
+            app:strokeWidth="2dp"
+            app:cornerRadius="26dp"
+            android:visibility="gone"
+            style="@style/Widget.Material3.Button.OutlinedButton"/>
+
+        <View android:layout_width="match_parent" android:layout_height="16dp"/>
+
+    </LinearLayout>
+</ScrollView>

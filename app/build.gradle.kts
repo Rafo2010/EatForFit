@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "rafayel.hakobyan.project"
+    namespace = "rafayel.hakobyan.EatForFit"
     compileSdk = 36
 
     defaultConfig {

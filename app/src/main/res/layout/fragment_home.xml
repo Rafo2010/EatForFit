@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F0"
+    android:background="#FFF5E6"
     android:fillViewport="true">
 
     <LinearLayout
@@ -12,138 +12,431 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Title -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Food Scanner"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:textColor="#1B4332"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Take a photo to see nutrition info"
-            android:textSize="13sp"
-            android:textColor="#6B7280"
-            android:layout_marginBottom="20dp" />
-
-        <!-- Camera Preview Card -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardCamera"
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/ivFoodPreview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:id="@+id/layoutPlaceholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="#E8F5E9">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📷"
-                        android:textSize="52sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tap to take a photo"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="#2D6A4F"
-                        android:layout_marginTop="8dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="or choose from gallery"
-                        android:textSize="12sp"
-                        android:textColor="#9CA3AF"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-
-                <FrameLayout
-                    android:id="@+id/layoutLoading"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#BB000000"
-                    android:visibility="gone">
-
-                    <ProgressBar
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:layout_gravity="center"
-                        android:indeterminateTint="#FFFFFF" />
-                </FrameLayout>
-
-                <ImageButton
-                    android:id="@+id/btnRetake"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_gravity="top|end"
-                    android:layout_margin="10dp"
-                    android:src="@android:drawable/ic_menu_rotate"
-                    android:background="#FFFFFF"
-                    android:padding="8dp"
-                    android:visibility="gone" />
-
-            </FrameLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Camera / Gallery Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Food Scanner"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/bronze_spice"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Take a photo to see nutrition info"
+                    android:textSize="13sp"
+                    android:textColor="@color/grey"/>
+
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCamera"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="50dp"
-                android:layout_marginEnd="8dp"
-                android:text="📷  Camera"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#2D6A4F"
-                app:cornerRadius="14dp" />
+                android:id="@+id/btnOpenCalendar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:text="📅"
+                android:textSize="18sp"
+                android:textAllCaps="false"
+                android:padding="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="24dp"
+                app:backgroundTint="@color/bronze_spice"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGallery"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="50dp"
-                android:layout_marginStart="8dp"
-                android:text="🖼  Gallery"
-                android:textColor="#2D6A4F"
-                android:backgroundTint="@android:color/transparent"
-                app:strokeColor="#2D6A4F"
-                app:strokeWidth="1.5dp"
-                app:cornerRadius="14dp"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
         </LinearLayout>
 
-        <!-- Nutrition Result Card -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/sunfower_gold"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardTodayCalories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TODAY'S CALORIES"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.15"
+                    android:textStyle="bold"
+                    android:textColor="#BCAAA4"
+                    android:layout_marginBottom="8dp"/>
+
+                <rafayel.hakobyan.EatForFit.CalorieArcView
+                    android:id="@+id/homeCalorieArcView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/homeTvDailyCalorieGoal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Daily goal: calculating..."
+                    android:textSize="12sp"
+                    android:textColor="#888888"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/homeTvCaloriesRemaining"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/bronze_spice"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/homeTvCaloriesLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No food logged today"
+                    android:textSize="13sp"
+                    android:textColor="#2196F3"
+                    android:gravity="center"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCamera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp">
+
+                    <ImageView
+                        android:id="@+id/ivFoodPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"/>
+
+                    <LinearLayout
+                        android:id="@+id/layoutPlaceholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="#FFF5E6">
+
+                        <FrameLayout
+                            android:layout_width="140dp"
+                            android:layout_height="140dp"
+                            android:layout_gravity="center_horizontal">
+
+                            <View
+                                android:id="@+id/viewPulseOuter"
+                                android:layout_width="140dp"
+                                android:layout_height="140dp"
+                                android:alpha="0.35"/>
+
+                            <View
+                                android:id="@+id/viewPulseInner"
+                                android:layout_width="108dp"
+                                android:layout_height="108dp"
+                                android:layout_gravity="center"
+                                android:alpha="0.55"/>
+
+                            <LinearLayout
+                                android:layout_width="76dp"
+                                android:layout_height="76dp"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:elevation="4dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📷"
+                                    android:textSize="30sp"/>
+                            </LinearLayout>
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Tap to scan your food"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/bronze_spice"
+                            android:letterSpacing="0.01"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="AI identifies food &amp; calculates nutrition instantly"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey"
+                            android:gravity="center"
+                            android:paddingHorizontal="24dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="#FFF0D6"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="✊"
+                                android:textSize="22sp"
+                                android:layout_marginEnd="10dp"/>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Place your fist next to the food"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/bronze_spice"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Helps AI estimate real portion size"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/grey"
+                                    android:layout_marginTop="2dp"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="⚡ Groq AI"
+                                android:textSize="10sp"
+                                android:textColor="#CC5803"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="4dp"/>
+
+                            <View
+                                android:layout_width="8dp"
+                                android:layout_height="1dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🥗 60+ Foods"
+                                android:textSize="10sp"
+                                android:textColor="#CC5803"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="4dp"/>
+
+                            <View
+                                android:layout_width="8dp"
+                                android:layout_height="1dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🌍 Any Cuisine"
+                                android:textSize="10sp"
+                                android:textColor="#CC5803"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="4dp"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/layoutLoading"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#CC000000"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ProgressBar
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:indeterminateTint="@color/amber_flame"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🤖 AI is analyzing..."
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="12dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Identifying food &amp; nutrients"
+                                android:textColor="#CCFFFFFF"
+                                android:textSize="11sp"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+                    </FrameLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnRetake"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="12dp"
+                        android:src="@android:drawable/ic_menu_rotate"
+                        android:padding="8dp"
+                        android:visibility="gone"
+                        app:tint="@color/black"/>
+
+                    <LinearLayout
+                        android:id="@+id/layoutFistOverlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="#CC000000"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✊"
+                            android:textSize="20sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Fist detected — AI will use it to estimate portion size accurately"
+                            android:textSize="11sp"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#FFEDD5"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="14dp"
+                    android:gravity="center">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCamera"
+                        android:layout_width="0dp"
+                        android:layout_height="54dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:text="📷  Camera"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF"
+                        android:letterSpacing="0.02"
+                        app:backgroundTint="@color/bronze_spice"
+                        app:cornerRadius="18dp"
+                        app:elevation="4dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGallery"
+                        android:layout_width="0dp"
+                        android:layout_height="54dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:text="🖼  Gallery"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/bronze_spice"
+                        android:letterSpacing="0.02"
+                        app:backgroundTint="#FFF5E6"
+                        app:strokeColor="@color/bronze_spice"
+                        app:strokeWidth="2dp"
+                        app:cornerRadius="18dp"
+                        style="@style/Widget.Material3.Button.OutlinedButton"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardResult"
             android:layout_width="match_parent"
@@ -165,7 +458,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="10dp">
 
                     <TextView
                         android:id="@+id/tvFoodEmoji"
@@ -173,7 +466,7 @@
                         android:layout_height="wrap_content"
                         android:text="🍎"
                         android:textSize="36sp"
-                        android:layout_marginEnd="14dp" />
+                        android:layout_marginEnd="14dp"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -188,29 +481,57 @@
                             android:text="Apple"
                             android:textSize="22sp"
                             android:textStyle="bold"
-                            android:textColor="#1B4332" />
+                            android:textColor="@color/bronze_spice"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="per 100g"
                             android:textSize="12sp"
-                            android:textColor="#9CA3AF" />
+                            android:textColor="@color/grey"/>
                     </LinearLayout>
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvAiDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/chocolate"
+                    android:lineSpacingExtra="2dp"
+                    android:layout_marginBottom="6dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tvRecommendation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/bronze_spice"
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="2dp"
+                    android:layout_marginBottom="14dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:background="#FFF0D6"
+                    android:visibility="gone"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F0F0F0"
-                    android:layout_marginBottom="16dp" />
+                    android:background="@color/sunfower_gold"
+                    android:layout_marginBottom="16dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:background="#E8F5E9"
+                    android:background="#FFF0D6"
                     android:padding="14dp"
                     android:layout_marginBottom="12dp">
 
@@ -221,7 +542,7 @@
                         android:text="🔥  Calories"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1B4332" />
+                        android:textColor="@color/bronze_spice"/>
 
                     <TextView
                         android:id="@+id/tvCalories"
@@ -230,13 +551,14 @@
                         android:text="52 kcal"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="#1B4332" />
+                        android:textColor="@color/bronze_spice"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -244,7 +566,7 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:background="#F0FFF4"
+                        android:background="#FFF5E6"
                         android:padding="12dp"
                         android:layout_marginEnd="6dp">
 
@@ -252,7 +574,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="💪"
-                            android:textSize="22sp" />
+                            android:textSize="22sp"/>
 
                         <TextView
                             android:id="@+id/tvProtein"
@@ -261,16 +583,16 @@
                             android:text="0.3g"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="#1B4332"
-                            android:layout_marginTop="4dp" />
+                            android:textColor="@color/bronze_spice"
+                            android:layout_marginTop="4dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Protein"
                             android:textSize="11sp"
-                            android:textColor="#6B7280"
-                            android:layout_marginTop="2dp" />
+                            android:textColor="@color/grey"
+                            android:layout_marginTop="2dp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -279,7 +601,7 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:background="#FFF8E1"
+                        android:background="#FFF8EC"
                         android:padding="12dp"
                         android:layout_marginEnd="6dp">
 
@@ -287,7 +609,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="🌾"
-                            android:textSize="22sp" />
+                            android:textSize="22sp"/>
 
                         <TextView
                             android:id="@+id/tvCarbs"
@@ -296,16 +618,16 @@
                             android:text="13.8g"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="#92400E"
-                            android:layout_marginTop="4dp" />
+                            android:textColor="@color/chocolate"
+                            android:layout_marginTop="4dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Carbs"
                             android:textSize="11sp"
-                            android:textColor="#6B7280"
-                            android:layout_marginTop="2dp" />
+                            android:textColor="@color/grey"
+                            android:layout_marginTop="2dp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -314,14 +636,14 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:background="#FEF3F2"
+                        android:background="#FFF3E0"
                         android:padding="12dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="🫐"
-                            android:textSize="22sp" />
+                            android:text="🫙"
+                            android:textSize="22sp"/>
 
                         <TextView
                             android:id="@+id/tvFats"
@@ -330,23 +652,57 @@
                             android:text="0.2g"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="#991B1B"
-                            android:layout_marginTop="4dp" />
+                            android:textColor="@color/deep_saffron"
+                            android:layout_marginTop="4dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Fats"
                             android:textSize="11sp"
-                            android:textColor="#6B7280"
-                            android:layout_marginTop="2dp" />
+                            android:textColor="@color/grey"
+                            android:layout_marginTop="2dp"/>
                     </LinearLayout>
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvLoggedCalories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="#FF4CAF50"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="4dp"
+                    android:visibility="gone"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLogServing"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="🍽️  Log How Much I Ate"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:backgroundTint="@color/deep_saffron"
+                    android:visibility="gone"
+                    app:cornerRadius="14dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAskAi"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="🤖  Ask AI about this food"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:backgroundTint="@color/bronze_spice"
+                    app:cornerRadius="14dp"/>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- ── History Section ── -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -358,10 +714,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="My Photos"
+                android:text="Today's Food"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#1B4332" />
+                android:textColor="@color/bronze_spice"/>
 
             <TextView
                 android:id="@+id/tvHistoryCount"
@@ -369,10 +725,9 @@
                 android:layout_height="wrap_content"
                 android:text="0 items"
                 android:textSize="12sp"
-                android:textColor="#9CA3AF" />
+                android:textColor="@color/grey"/>
         </LinearLayout>
 
-        <!-- Empty state -->
         <LinearLayout
             android:id="@+id/layoutEmptyHistory"
             android:layout_width="match_parent"
@@ -387,25 +742,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="🍽️"
-                android:textSize="40sp" />
+                android:textSize="40sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No photos yet"
                 android:textSize="14sp"
-                android:textColor="#9CA3AF"
-                android:layout_marginTop="8dp" />
+                android:textColor="@color/grey"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Take a photo to log today's food. Past meals are in 📅 Calendar."
+                android:textSize="12sp"
+                android:textColor="@color/sunfower_gold"
+                android:layout_marginTop="4dp"
+                android:gravity="center"/>
         </LinearLayout>
 
-        <!-- History list container (cards added dynamically) -->
         <LinearLayout
             android:id="@+id/layoutHistoryContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"/>
 
-        <View android:layout_width="match_parent" android:layout_height="24dp" />
+        <View android:layout_width="match_parent" android:layout_height="24dp"/>
 
     </LinearLayout>
 </ScrollView>

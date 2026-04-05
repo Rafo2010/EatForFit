@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="rafayel.hakobyan.project">
+    package="rafayel.hakobyan.EatForFit">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
@@ -19,7 +21,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".Register"
+            android:name="rafayel.hakobyan.EatForFit.Register"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,20 +30,26 @@
         </activity>
 
         <activity
-            android:name=".SignInActivity"
+            android:name="rafayel.hakobyan.EatForFit.SignInActivity"
             android:exported="false" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="rafayel.hakobyan.EatForFit.MainActivity"
             android:exported="false" />
 
         <activity
-            android:name=".ProfileFragment"
-            android:exported="false" />
+            android:name="rafayel.hakobyan.EatForFit.FoodResultActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Project" />
+
+        <activity
+            android:name="rafayel.hakobyan.EatForFit.CalendarActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Project" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="rafayel.hakobyan.project.fileprovider"
+            android:authorities="rafayel.hakobyan.EatForFit.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

@@ -6,55 +6,12 @@
     android:orientation="vertical"
     android:background="#FDF6EC">
 
-    <!-- Top Bar -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="12dp"
-        app:cardBackgroundColor="@color/chocolate">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:gravity="center_vertical">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Welcome Back"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:textStyle="bold"/>
-
-
-
-            </LinearLayout>
-
-
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Fragment Container -->
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <!-- Bottom Navigation -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,7 +25,6 @@
             android:orientation="horizontal"
             android:weightSum="2">
 
-            <!-- Home -->
             <LinearLayout
                 android:id="@+id/home_button"
                 android:layout_width="0dp"
@@ -97,13 +53,11 @@
 
             </LinearLayout>
 
-            <!-- Divider -->
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="#F0F0F0"/>
 
-            <!-- Profile -->
             <LinearLayout
                 android:id="@+id/profile_button"
                 android:layout_width="0dp"

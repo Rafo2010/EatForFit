@@ -1,7 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Project" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="android:statusBarColor">@color/bronze_spice</item>
+
+        <!-- Force all EditText text to black everywhere in the app -->
+        <item name="android:editTextColor">#FF000000</item>
+        <item name="editTextColor">#FF000000</item>
+
+        <!-- Force TextInputLayout hint and stroke to dark colors -->
+        <item name="colorOnSurface">#FF000000</item>
+        <item name="colorOnBackground">#FF000000</item>
+
+        <!-- Force background of all inputs to white so text is visible -->
+        <item name="android:colorBackground">#FFFFFFFF</item>
+
     </style>
+
+    <style name="Theme.Project" parent="Base.Theme.Project" />
 </resources>

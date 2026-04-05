@@ -16,7 +16,6 @@
             android:layout_height="wrap_content"
             android:padding="24dp">
 
-            <!-- WELCOME CARD -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/welcome"
                 android:layout_width="0dp"
