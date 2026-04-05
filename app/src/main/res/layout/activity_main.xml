@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="68dp"
             android:orientation="horizontal"
-            android:weightSum="2">
+            android:weightSum="3">
 
             <LinearLayout
                 android:id="@+id/home_button"
@@ -47,6 +47,39 @@
                     android:layout_height="wrap_content"
                     android:text="HOME"
                     android:textColor="@color/bronze_spice"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="4dp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#F0F0F0"/>
+
+            <LinearLayout
+                android:id="@+id/meal_plan_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <ImageView
+                    android:id="@+id/meal_plan_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_meal_plan"
+                    app:tint="@android:color/darker_gray"/>
+
+                <TextView
+                    android:id="@+id/meal_plan_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MEAL PLAN"
+                    android:textColor="@android:color/darker_gray"
                     android:textSize="11sp"
                     android:textStyle="bold"
                     android:layout_marginTop="4dp"/>
