@@ -161,30 +161,112 @@
                         android:textColor="#1565C0"
                         android:layout_marginStart="10dp"/>
 
+                    <!-- AI goal badge -->
                     <TextView
-                        android:id="@+id/tvWaterCount"
+                        android:id="@+id/tvWaterGoalBadge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0 / 8 glasses"
-                        android:textSize="11sp"
-                        android:textColor="#2196F3"
-                        android:textStyle="bold"/>
+                        android:text="Goal: — cups"
+                        android:textSize="10sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:background="#FF2196F3"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp"/>
 
                 </LinearLayout>
 
-                <!-- Tap-to-fill glasses row -->
+                <!-- Progress bar -->
+                <ProgressBar
+                    android:id="@+id/waterProgressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginBottom="12dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="#2196F3"
+                    android:progressBackgroundTint="#E3F2FD"/>
+
+                <!-- Cup counter row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp">
+
+                    <!-- Minus button -->
+                    <TextView
+                        android:id="@+id/btnWaterMinus"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:gravity="center"
+                        android:text="−"
+                        android:textSize="24sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:background="#FF2196F3"/>
+
+                    <!-- Cup display -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tvWaterCupCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="36sp"
+                            android:textStyle="bold"
+                            android:textColor="#1565C0"/>
+
+                        <TextView
+                            android:id="@+id/tvWaterCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 / 8 cups today"
+                            android:textSize="11sp"
+                            android:textColor="#2196F3"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                    <!-- Plus button -->
+                    <TextView
+                        android:id="@+id/btnWaterPlus"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:gravity="center"
+                        android:text="+"
+                        android:textSize="24sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:background="#FF2196F3"/>
+
+                </LinearLayout>
+
+                <!-- Cup emoji row (visual) -->
                 <LinearLayout
                     android:id="@+id/layoutWaterGlasses"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="6dp"/>
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp"/>
 
+                <!-- AI recommendation hint -->
                 <TextView
+                    android:id="@+id/tvWaterHint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tap a glass to log it. Goal: 8 glasses / day."
+                    android:text="AI is calculating your daily goal…"
                     android:textSize="10sp"
                     android:textColor="#AAAAAA"/>
 

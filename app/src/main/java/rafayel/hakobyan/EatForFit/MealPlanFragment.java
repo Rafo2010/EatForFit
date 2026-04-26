@@ -59,6 +59,7 @@ public class MealPlanFragment extends Fragment {
     private static final String KEY_PLAN_DATE   = "meal_plan_date";
     private static final String KEY_WATER       = "water_glasses_today";
     private static final String KEY_WATER_DATE  = "water_date";
+    private static final String KEY_WATER_GOAL  = "water_goal_cups";
 
     private String currentUserId = "default";
 
@@ -67,10 +68,17 @@ public class MealPlanFragment extends Fragment {
     private LinearLayout timelineSlots;
     private MaterialButton btnRetry, btnRegenerate;
 
+    // Water tracker views
     private LinearLayout layoutWaterGlasses;
     private TextView     tvWaterCount;
-    private int          waterGlasses = 0;
-    private static final int WATER_GOAL = 8;
+    private TextView     tvWaterCupCount;
+    private TextView     tvWaterGoalBadge;
+    private TextView     tvWaterHint;
+    private ProgressBar  waterProgressBar;
+    private TextView     btnWaterPlus;
+    private TextView     btnWaterMinus;
+    private int          waterCups = 0;
+    private int          waterGoal = 8;
 
     private MealSlotData breakfast, lunch, dinner, snacks;
 
@@ -152,8 +160,6 @@ public class MealPlanFragment extends Fragment {
 
     public MealPlanFragment() {}
 
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -175,8 +181,16 @@ public class MealPlanFragment extends Fragment {
         tvPlanDate         = view.findViewById(R.id.tvPlanDate);
         tvDailyGoalSummary = view.findViewById(R.id.tvDailyGoalSummary);
         timelineSlots      = view.findViewById(R.id.timelineSlots);
+
+        // Water tracker views
         layoutWaterGlasses = view.findViewById(R.id.layoutWaterGlasses);
         tvWaterCount       = view.findViewById(R.id.tvWaterCount);
+        tvWaterCupCount    = view.findViewById(R.id.tvWaterCupCount);
+        tvWaterGoalBadge   = view.findViewById(R.id.tvWaterGoalBadge);
+        tvWaterHint        = view.findViewById(R.id.tvWaterHint);
+        waterProgressBar   = view.findViewById(R.id.waterProgressBar);
+        btnWaterPlus       = view.findViewById(R.id.btnWaterPlus);
+        btnWaterMinus      = view.findViewById(R.id.btnWaterMinus);
 
         com.google.firebase.auth.FirebaseUser fbUser =
                 com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
@@ -184,6 +198,21 @@ public class MealPlanFragment extends Fragment {
 
         btnRetry.setOnClickListener(v -> generateNewPlan());
         btnRegenerate.setOnClickListener(v -> generateNewPlan());
+
+        if (btnWaterPlus != null) {
+            btnWaterPlus.setOnClickListener(v -> {
+                waterCups = Math.min(waterCups + 1, waterGoal + 4);
+                saveWater();
+                renderWaterTracker();
+            });
+        }
+        if (btnWaterMinus != null) {
+            btnWaterMinus.setOnClickListener(v -> {
+                waterCups = Math.max(0, waterCups - 1);
+                saveWater();
+                renderWaterTracker();
+            });
+        }
 
         breakfast = new MealSlotData("Breakfast", "🌅", "7 – 9 AM");
         lunch     = new MealSlotData("Lunch",     "☀️", "12 – 2 PM");
@@ -206,6 +235,9 @@ public class MealPlanFragment extends Fragment {
         renderWaterTracker();
     }
 
+    // -------------------------------------------------------------------------
+    // Water Tracker
+    // -------------------------------------------------------------------------
 
     private void loadWater() {
         if (!isAdded()) return;
@@ -213,7 +245,60 @@ public class MealPlanFragment extends Fragment {
                 .getSharedPreferences(PREFS_NAME + "_" + currentUserId, Context.MODE_PRIVATE);
         String today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         String saved = prefs.getString(KEY_WATER_DATE, "");
-        waterGlasses = today.equals(saved) ? prefs.getInt(KEY_WATER, 0) : 0;
+        waterCups = today.equals(saved) ? prefs.getInt(KEY_WATER, 0) : 0;
+        waterGoal = prefs.getInt(KEY_WATER_GOAL, 8);
+        calculateAndSaveWaterGoal(prefs);
+    }
+
+    /**
+     * AI-based personalised water goal.
+     * Formula: weight_kg x 0.033 x activity_multiplier = liters/day
+     * 1 cup = 237 ml. Result clamped to [6, 16] cups.
+     */
+    private void calculateAndSaveWaterGoal(SharedPreferences prefs) {
+        String weightStr = prefs.getString("current_weight", "");
+        String activity  = prefs.getString("activity", "moderately_active");
+        if (weightStr.isEmpty()) return;
+
+        try {
+            float weightKg = Float.parseFloat(weightStr);
+
+            float multiplier;
+            switch (activity) {
+                case "sedentary":         multiplier = 1.0f; break;
+                case "lightly_active":    multiplier = 1.1f; break;
+                case "moderately_active": multiplier = 1.2f; break;
+                case "very_active":       multiplier = 1.3f; break;
+                case "extra_active":      multiplier = 1.4f; break;
+                default:                  multiplier = 1.2f; break;
+            }
+
+            float liters = weightKg * 0.033f * multiplier;
+            int cups = Math.round(liters / 0.237f);
+            cups = Math.max(6, Math.min(cups, 16));
+
+            waterGoal = cups;
+            prefs.edit().putInt(KEY_WATER_GOAL, cups).apply();
+
+            final int finalCups = cups;
+            final float finalMult = multiplier;
+            final float finalWeight = weightKg;
+            final String finalActivity = activity;
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (!isAdded()) return;
+                if (tvWaterGoalBadge != null)
+                    tvWaterGoalBadge.setText("Goal: " + finalCups + " cups");
+                if (tvWaterHint != null) {
+                    String actLabel = finalActivity.replace("_", " ");
+                    tvWaterHint.setText(String.format(Locale.getDefault(),
+                            "Based on %.0f kg × 0.033 × %.1f (%s) = %d cups/day",
+                            finalWeight, finalMult, actLabel, finalCups));
+                }
+                updateWaterLabel();
+            });
+
+        } catch (Exception ignored) {}
     }
 
     private void saveWater() {
@@ -221,7 +306,7 @@ public class MealPlanFragment extends Fragment {
         String today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         requireContext().getSharedPreferences(PREFS_NAME + "_" + currentUserId, Context.MODE_PRIVATE)
                 .edit()
-                .putInt(KEY_WATER, waterGlasses)
+                .putInt(KEY_WATER, waterCups)
                 .putString(KEY_WATER_DATE, today)
                 .apply();
     }
@@ -230,37 +315,59 @@ public class MealPlanFragment extends Fragment {
         if (!isAdded() || layoutWaterGlasses == null) return;
         layoutWaterGlasses.removeAllViews();
 
-        for (int i = 0; i < WATER_GOAL; i++) {
-            TextView glass = new TextView(requireContext());
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(36), dp(36));
-            lp.topMargin = dp(4);
-            glass.setLayoutParams(lp);
-            glass.setText(i < waterGlasses ? "💧" : "🫙");
-            glass.setTextSize(20f);
-            glass.setGravity(Gravity.CENTER);
-            final int idx = i;
-            glass.setOnClickListener(v -> {
-                waterGlasses = (idx < waterGlasses) ? idx : idx + 1;
-                saveWater();
-                renderWaterTracker();
-                updateWaterLabel();
-            });
-            layoutWaterGlasses.addView(glass);
+        int displayCount = Math.min(waterGoal, 12);
+        for (int i = 0; i < displayCount; i++) {
+            TextView cup = new TextView(requireContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(28), dp(28));
+            lp.setMargins(dp(2), dp(2), dp(2), dp(2));
+            cup.setLayoutParams(lp);
+            cup.setText(i < waterCups ? "💧" : "🫙");
+            cup.setTextSize(16f);
+            cup.setGravity(Gravity.CENTER);
+            layoutWaterGlasses.addView(cup);
         }
+        if (waterGoal > 12) {
+            TextView more = new TextView(requireContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.gravity = Gravity.CENTER_VERTICAL;
+            more.setLayoutParams(lp);
+            more.setText("+" + (waterGoal - 12));
+            more.setTextSize(11f);
+            more.setTextColor(0xFF2196F3);
+            more.setGravity(Gravity.CENTER);
+            layoutWaterGlasses.addView(more);
+        }
+
         updateWaterLabel();
     }
 
     private void updateWaterLabel() {
         if (tvWaterCount == null) return;
-        if (waterGlasses >= WATER_GOAL) {
-            tvWaterCount.setText("🎉 Goal reached! " + waterGlasses + "/" + WATER_GOAL + " glasses");
+
+        if (tvWaterGoalBadge != null)
+            tvWaterGoalBadge.setText("Goal: " + waterGoal + " cups");
+
+        if (tvWaterCupCount != null)
+            tvWaterCupCount.setText(String.valueOf(waterCups));
+
+        if (waterProgressBar != null) {
+            int pct = waterGoal > 0 ? (int) ((waterCups * 100f) / waterGoal) : 0;
+            waterProgressBar.setProgress(Math.min(pct, 100));
+        }
+
+        if (waterCups >= waterGoal) {
+            tvWaterCount.setText("🎉 Goal reached! " + waterCups + "/" + waterGoal + " cups");
             tvWaterCount.setTextColor(0xFF4CAF50);
         } else {
-            tvWaterCount.setText(waterGlasses + " / " + WATER_GOAL + " glasses today");
+            tvWaterCount.setText(waterCups + " / " + waterGoal + " cups today");
             tvWaterCount.setTextColor(0xFF2196F3);
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Meal Plan
+    // -------------------------------------------------------------------------
 
     private void loadMealPlan() {
         SharedPreferences prefs = requireContext()
@@ -406,7 +513,6 @@ public class MealPlanFragment extends Fragment {
         }
     }
 
-
     private void showTimeline() {
         if (!isAdded()) return;
         layoutLoading.setVisibility(View.GONE);
@@ -426,7 +532,6 @@ public class MealPlanFragment extends Fragment {
         for (int i = 0; i < slots.length; i++)
             timelineSlots.addView(buildSlotCard(slots[i], i == slots.length - 1));
 
-        // Daily summary
         if (tvDailyGoalSummary != null) {
             SharedPreferences prefs = requireContext()
                     .getSharedPreferences(PREFS_NAME + "_" + currentUserId, Context.MODE_PRIVATE);
@@ -440,7 +545,6 @@ public class MealPlanFragment extends Fragment {
                     + Math.round(pct * 100) + "% of plan");
         }
     }
-
 
     private View buildSlotCard(MealSlotData slot, boolean isLast) {
         LinearLayout row = new LinearLayout(requireContext());
@@ -494,7 +598,7 @@ public class MealPlanFragment extends Fragment {
 
         ArcProgressView arc = new ArcProgressView(requireContext());
         arc.setLayoutParams(new LinearLayout.LayoutParams(dp(56), dp(56)));
-        arc.setProgress(0f, slot.arcColor()); // will animate below
+        arc.setProgress(0f, slot.arcColor());
 
         FrameLayout arcFrame = new FrameLayout(requireContext());
         arcFrame.setLayoutParams(new LinearLayout.LayoutParams(dp(56), dp(56)));
@@ -545,7 +649,6 @@ public class MealPlanFragment extends Fragment {
         nameCol.addView(tvTime);
         nameCol.addView(tvTarget);
 
-        // Status chip
         TextView tvStatus = new TextView(requireContext());
         tvStatus.setText(slot.statusText());
         tvStatus.setTextSize(11f);
@@ -561,7 +664,6 @@ public class MealPlanFragment extends Fragment {
         header.addView(tvStatus);
         cardContent.addView(header);
 
-        // ── Progress bar ─────────────────────────────────────────────────
         ProgressBar pb = new ProgressBar(requireContext(), null,
                 android.R.attr.progressBarStyleHorizontal);
         LinearLayout.LayoutParams pbLp = new LinearLayout.LayoutParams(
@@ -574,7 +676,6 @@ public class MealPlanFragment extends Fragment {
         pb.setProgressBackgroundTintList(ColorStateList.valueOf(0xFFEEE8E0));
         cardContent.addView(pb);
 
-        // ── Macro grid: 4 cells ──────────────────────────────────────────
         LinearLayout macroRow = new LinearLayout(requireContext());
         macroRow.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams macroLp = new LinearLayout.LayoutParams(
@@ -590,7 +691,6 @@ public class MealPlanFragment extends Fragment {
         addMacroCell(macroRow, "🫙", slot.loggedFats     + "", slot.targetFats     + "", "fats",    0xFFFF9505, false);
         cardContent.addView(macroRow);
 
-        // ── Tip ──────────────────────────────────────────────────────────
         if (slot.tip != null && !slot.tip.isEmpty()) {
             TextView tvTip = new TextView(requireContext());
             LinearLayout.LayoutParams tipLp = new LinearLayout.LayoutParams(
@@ -606,7 +706,6 @@ public class MealPlanFragment extends Fragment {
             cardContent.addView(tvTip);
         }
 
-        // ── Food suggestions chips ────────────────────────────────────────
         if (slot.suggestions != null && slot.suggestions.length > 0) {
             TextView suggLabel = new TextView(requireContext());
             LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(
@@ -656,16 +755,13 @@ public class MealPlanFragment extends Fragment {
 
         card.addView(cardContent);
 
-        // ── Animate arc + bar after layout ───────────────────────────────
         card.post(() -> {
-            // Animate progress bar
             ValueAnimator barAnim = ValueAnimator.ofInt(0, (int)(slot.progressPct() * 100));
             barAnim.setDuration(800);
             barAnim.setInterpolator(new DecelerateInterpolator());
             barAnim.addUpdateListener(a -> pb.setProgress((int) a.getAnimatedValue()));
             barAnim.start();
 
-            // Animate arc
             ValueAnimator arcAnim = ValueAnimator.ofFloat(0f, slot.progressPct());
             arcAnim.setDuration(900);
             arcAnim.setInterpolator(new DecelerateInterpolator());
@@ -700,11 +796,11 @@ public class MealPlanFragment extends Fragment {
         tvVal.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
         tvVal.setGravity(Gravity.CENTER);
 
-        TextView tvTarget = new TextView(requireContext());
-        tvTarget.setText("/ " + target);
-        tvTarget.setTextSize(9f);
-        tvTarget.setTextColor(0xFFBBBBBB);
-        tvTarget.setGravity(Gravity.CENTER);
+        TextView tvTarget2 = new TextView(requireContext());
+        tvTarget2.setText("/ " + target);
+        tvTarget2.setTextSize(9f);
+        tvTarget2.setTextColor(0xFFBBBBBB);
+        tvTarget2.setGravity(Gravity.CENTER);
 
         TextView tvLabel = new TextView(requireContext());
         tvLabel.setText(label);
@@ -714,7 +810,7 @@ public class MealPlanFragment extends Fragment {
 
         cell.addView(tvEmoji);
         cell.addView(tvVal);
-        cell.addView(tvTarget);
+        cell.addView(tvTarget2);
         cell.addView(tvLabel);
 
         parent.addView(cell);
@@ -734,9 +830,9 @@ public class MealPlanFragment extends Fragment {
         return d;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    // -------------------------------------------------------------------------
     // UI states
-    // ─────────────────────────────────────────────────────────────────────────
+    // -------------------------------------------------------------------------
 
     private void showLoading() {
         if (!isAdded()) return;
@@ -753,9 +849,9 @@ public class MealPlanFragment extends Fragment {
         tvErrorMsg.setText(msg);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    // -------------------------------------------------------------------------
     // Groq API
-    // ─────────────────────────────────────────────────────────────────────────
+    // -------------------------------------------------------------------------
 
     private String callGroqText(String prompt, int maxTokens) throws Exception {
         JSONObject userMsg = new JSONObject();
