@@ -7,6 +7,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +22,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -70,6 +77,10 @@ public class HomeFragment extends Fragment {
     private static final String PREFS_NAME  = "food_scanner_prefs";
     private static final String KEY_HISTORY = "food_history";
     private static final int    MAX_ENTRIES = 100;
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Data classes
+    // ─────────────────────────────────────────────────────────────────────────
 
     static class FoodEntry {
         String id, savedImagePath, name, emoji, category, date, aiDescription, recommendation;
@@ -132,45 +143,59 @@ public class HomeFragment extends Fragment {
         int     estimatedGrams;
         IdentifyResult(boolean isFood, String foodName, String description,
                        int estimatedGrams, boolean fistDetected) {
-            this.isFood        = isFood;
-            this.foodName      = foodName;
-            this.description   = description;
+            this.isFood         = isFood;
+            this.foodName       = foodName;
+            this.description    = description;
             this.estimatedGrams = estimatedGrams;
-            this.fistDetected  = fistDetected;
+            this.fistDetected   = fistDetected;
         }
     }
 
-    private CardView       cardCamera;
-    private ImageView      ivFoodPreview;
-    private LinearLayout   layoutPlaceholder;
-    private FrameLayout    layoutLoading;
-    private ImageButton    btnRetake;
-    private MaterialButton btnCamera, btnGallery;
-    private CardView       cardResult;
-    private TextView       tvFoodEmoji, tvFoodName;
-    private TextView       tvCalories, tvProtein, tvCarbs, tvFats;
-    private TextView       tvAiDescription, tvRecommendation, tvLoggedCalories;
-    private MaterialButton btnLogServing;
-    private LinearLayout   layoutHistoryContainer, layoutEmptyHistory;
-    private TextView       tvHistoryCount;
-    private LinearLayout   layoutFistOverlay;
+    // ─────────────────────────────────────────────────────────────────────────
+    // Views
+    // ─────────────────────────────────────────────────────────────────────────
 
-    private View viewPulseOuter, viewPulseInner;
+    private CardView           cardCamera;
+    private ImageView          ivFoodPreview;
+    private LinearLayout       layoutPlaceholder;
+    private FrameLayout        layoutLoading;
+    private ImageButton        btnRetake;
+    private MaterialButton     btnCamera, btnGallery;
+    private CardView           cardResult;
+    private TextView           tvFoodEmoji, tvFoodName;
+    private TextView           tvCalories, tvProtein, tvCarbs, tvFats;
+    private TextView           tvAiDescription, tvRecommendation, tvLoggedCalories;
+    private MaterialButton     btnLogServing;
+    private LinearLayout       layoutHistoryContainer, layoutEmptyHistory;
+    private TextView           tvHistoryCount;
+    private LinearLayout       layoutFistOverlay;
+    private View               viewPulseOuter, viewPulseInner;
+    private CalorieArcView     homeCalorieArcView;
+    private TextView           homeTvDailyCalorieGoal, homeTvCaloriesRemaining, homeTvCaloriesLabel;
 
-    private CalorieArcView homeCalorieArcView;
-    private TextView       homeTvDailyCalorieGoal, homeTvCaloriesRemaining, homeTvCaloriesLabel;
-    private int            dailyCalorieGoal = 2000;
+    /** NEW: the animated scanner overlay */
+    private ScannerOverlayView scannerOverlay;
+
+    private int dailyCalorieGoal = 2000;
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // State
+    // ─────────────────────────────────────────────────────────────────────────
 
     private Uri    photoUri;
     private String lastBase64Image;
     private String lastAiDescription = "";
-    private String currentUserId = "default";
+    private String currentUserId     = "default";
     private final List<FoodEntry> historyList = new ArrayList<>();
 
     private final OkHttpClient httpClient = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(90, TimeUnit.SECONDS)
             .build();
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Launchers
+    // ─────────────────────────────────────────────────────────────────────────
 
     private final ActivityResultLauncher<Uri> cameraLauncher =
             registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
@@ -196,6 +221,10 @@ public class HomeFragment extends Fragment {
             });
 
     public HomeFragment() {}
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Lifecycle
+    // ─────────────────────────────────────────────────────────────────────────
 
     @Nullable
     @Override
@@ -230,35 +259,41 @@ public class HomeFragment extends Fragment {
         loadTodayCalories();
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // View binding
+    // ─────────────────────────────────────────────────────────────────────────
+
     private void bindViews(View root) {
-        cardCamera             = root.findViewById(R.id.cardCamera);
-        ivFoodPreview          = root.findViewById(R.id.ivFoodPreview);
-        layoutPlaceholder      = root.findViewById(R.id.layoutPlaceholder);
-        layoutLoading          = root.findViewById(R.id.layoutLoading);
-        btnRetake              = root.findViewById(R.id.btnRetake);
-        btnCamera              = root.findViewById(R.id.btnCamera);
-        btnGallery             = root.findViewById(R.id.btnGallery);
-        cardResult             = root.findViewById(R.id.cardResult);
-        tvFoodEmoji            = root.findViewById(R.id.tvFoodEmoji);
-        tvFoodName             = root.findViewById(R.id.tvFoodName);
-        tvCalories             = root.findViewById(R.id.tvCalories);
-        tvProtein              = root.findViewById(R.id.tvProtein);
-        tvCarbs                = root.findViewById(R.id.tvCarbs);
-        tvFats                 = root.findViewById(R.id.tvFats);
-        tvAiDescription        = root.findViewById(R.id.tvAiDescription);
-        tvRecommendation       = root.findViewById(R.id.tvRecommendation);
-        tvLoggedCalories       = root.findViewById(R.id.tvLoggedCalories);
-        btnLogServing          = root.findViewById(R.id.btnLogServing);
-        layoutHistoryContainer = root.findViewById(R.id.layoutHistoryContainer);
-        layoutEmptyHistory     = root.findViewById(R.id.layoutEmptyHistory);
-        tvHistoryCount         = root.findViewById(R.id.tvHistoryCount);
-        viewPulseOuter         = root.findViewById(R.id.viewPulseOuter);
-        viewPulseInner         = root.findViewById(R.id.viewPulseInner);
-        layoutFistOverlay      = root.findViewById(R.id.layoutFistOverlay);
+        cardCamera              = root.findViewById(R.id.cardCamera);
+        ivFoodPreview           = root.findViewById(R.id.ivFoodPreview);
+        layoutPlaceholder       = root.findViewById(R.id.layoutPlaceholder);
+        layoutLoading           = root.findViewById(R.id.layoutLoading);
+        btnRetake               = root.findViewById(R.id.btnRetake);
+        btnCamera               = root.findViewById(R.id.btnCamera);
+        btnGallery              = root.findViewById(R.id.btnGallery);
+        cardResult              = root.findViewById(R.id.cardResult);
+        tvFoodEmoji             = root.findViewById(R.id.tvFoodEmoji);
+        tvFoodName              = root.findViewById(R.id.tvFoodName);
+        tvCalories              = root.findViewById(R.id.tvCalories);
+        tvProtein               = root.findViewById(R.id.tvProtein);
+        tvCarbs                 = root.findViewById(R.id.tvCarbs);
+        tvFats                  = root.findViewById(R.id.tvFats);
+        tvAiDescription         = root.findViewById(R.id.tvAiDescription);
+        tvRecommendation        = root.findViewById(R.id.tvRecommendation);
+        tvLoggedCalories        = root.findViewById(R.id.tvLoggedCalories);
+        btnLogServing           = root.findViewById(R.id.btnLogServing);
+        layoutHistoryContainer  = root.findViewById(R.id.layoutHistoryContainer);
+        layoutEmptyHistory      = root.findViewById(R.id.layoutEmptyHistory);
+        tvHistoryCount          = root.findViewById(R.id.tvHistoryCount);
+        viewPulseOuter          = root.findViewById(R.id.viewPulseOuter);
+        viewPulseInner          = root.findViewById(R.id.viewPulseInner);
+        layoutFistOverlay       = root.findViewById(R.id.layoutFistOverlay);
         homeCalorieArcView      = root.findViewById(R.id.homeCalorieArcView);
         homeTvDailyCalorieGoal  = root.findViewById(R.id.homeTvDailyCalorieGoal);
         homeTvCaloriesRemaining = root.findViewById(R.id.homeTvCaloriesRemaining);
         homeTvCaloriesLabel     = root.findViewById(R.id.homeTvCaloriesLabel);
+        // NEW: scanner overlay
+        scannerOverlay          = root.findViewById(R.id.scannerOverlay);
     }
 
     private void setupListeners() {
@@ -271,6 +306,10 @@ public class HomeFragment extends Fragment {
         if (btnCal != null) btnCal.setOnClickListener(v ->
                 startActivity(new android.content.Intent(requireContext(), CalendarActivity.class)));
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Animations
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void startPulseAnimation() {
         if (viewPulseOuter == null || viewPulseInner == null) return;
@@ -305,6 +344,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Image helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
     private String saveImagePermanently(Uri sourceUri) {
         try {
             InputStream is = requireContext().getContentResolver().openInputStream(sourceUri);
@@ -323,15 +366,43 @@ public class HomeFragment extends Fragment {
             File outFile = new File(dir, filename);
             FileOutputStream fos = new FileOutputStream(outFile);
             bmp.compress(Bitmap.CompressFormat.JPEG, 75, fos);
-            fos.flush(); fos.close();
+            fos.flush();
+            fos.close();
             return outFile.getAbsolutePath();
         } catch (Exception e) { return null; }
     }
 
+    /**
+     * Crops the image to a centered square and rounds corners.
+     * Simulates "crop everything but food" — visually tight-crops to
+     * the most food-likely center region with a polished rounded look.
+     */
+    private Bitmap cropToFood(Bitmap src) {
+        int w    = src.getWidth();
+        int h    = src.getHeight();
+        int size = (int)(Math.min(w, h) * 0.82f);
+        int x    = (w - size) / 2;
+        int y    = (h - size) / 2;
+        Bitmap cropped = Bitmap.createBitmap(src, x, y, size, size);
+
+        // Apply rounded corners
+        Bitmap rounded = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas  = new Canvas(rounded);
+        Paint  paint   = new Paint(Paint.ANTI_ALIAS_FLAG);
+        canvas.drawRoundRect(new RectF(0, 0, size, size), 36f, 36f, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(cropped, 0, 0, paint);
+        return rounded;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // History helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
     private void saveHistoryToStorage() {
         try {
-            JSONArray arr = new JSONArray();
-            int limit = Math.min(historyList.size(), MAX_ENTRIES);
+            JSONArray arr   = new JSONArray();
+            int       limit = Math.min(historyList.size(), MAX_ENTRIES);
             for (int i = 0; i < limit; i++) arr.put(historyList.get(i).toJson());
             SharedPreferences prefs = requireContext()
                     .getSharedPreferences(PREFS_NAME + "_" + currentUserId, Context.MODE_PRIVATE);
@@ -346,14 +417,13 @@ public class HomeFragment extends Fragment {
                     .getSharedPreferences(PREFS_NAME + "_" + currentUserId, Context.MODE_PRIVATE);
             String json = prefs.getString(KEY_HISTORY, null);
             if (json == null || json.isEmpty()) return;
-            String today = new SimpleDateFormat("dd MMM", Locale.getDefault()).format(new Date());
-            JSONArray arr = new JSONArray(json);
+            String    today = new SimpleDateFormat("dd MMM", Locale.getDefault()).format(new Date());
+            JSONArray arr   = new JSONArray(json);
             for (int i = 0; i < arr.length(); i++) {
                 FoodEntry entry = FoodEntry.fromJson(arr.getJSONObject(i));
                 if (entry.date == null || !entry.date.startsWith(today)) continue;
                 if (entry.savedImagePath != null && !entry.savedImagePath.isEmpty()) {
-                    File f = new File(entry.savedImagePath);
-                    if (f.exists()) historyList.add(entry);
+                    if (new File(entry.savedImagePath).exists()) historyList.add(entry);
                 } else {
                     historyList.add(entry);
                 }
@@ -361,17 +431,48 @@ public class HomeFragment extends Fragment {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * NEW: saves a recognised food entry to historyList + SharedPreferences
+     * immediately after AI recognition — so the photo appears in history
+     * right away without waiting for the user to press "Log".
+     */
+    private void saveEntryToHistory(String savedImagePath, FoodDatabase.FoodInfo info,
+                                    String description, String recommendation,
+                                    int estimatedGrams, boolean fistDetected) {
+        FoodEntry entry       = new FoodEntry();
+        entry.savedImagePath  = savedImagePath != null ? savedImagePath : "";
+        entry.name            = info.name;
+        entry.emoji           = info.emoji;
+        entry.category        = info.category;
+        entry.calories        = info.calories;
+        entry.protein         = info.protein;
+        entry.carbs           = info.carbs;
+        entry.fats            = info.fats;
+        entry.aiDescription   = description  != null ? description  : "";
+        entry.recommendation  = recommendation != null ? recommendation : "";
+        entry.estimatedGrams  = estimatedGrams > 0 ? estimatedGrams : 100;
+        entry.fistDetected    = fistDetected;
+        entry.date = new SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault()).format(new Date());
+        if (!entry.savedImagePath.isEmpty())
+            entry.imageUri = Uri.parse("file://" + entry.savedImagePath);
+
+        historyList.add(0, entry);   // newest first
+        saveHistoryToStorage();
+    }
+
     private void deleteEntry(int index) {
         if (index < 0 || index >= historyList.size()) return;
         FoodEntry entry = historyList.get(index);
-        if (entry.savedImagePath != null && !entry.savedImagePath.isEmpty()) {
-            File f = new File(entry.savedImagePath);
-            if (f.exists()) f.delete();
-        }
+        if (entry.savedImagePath != null && !entry.savedImagePath.isEmpty())
+            new File(entry.savedImagePath).delete();
         historyList.remove(index);
         saveHistoryToStorage();
         refreshHistoryUI();
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Camera / gallery
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void requestCameraAndOpen() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
@@ -384,8 +485,8 @@ public class HomeFragment extends Fragment {
 
     private void launchCamera() {
         try {
-            String ts = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            File imageFile = File.createTempFile("FOOD_" + ts, ".jpg",
+            String ts        = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            File   imageFile = File.createTempFile("FOOD_" + ts, ".jpg",
                     requireContext().getExternalFilesDir(null));
             photoUri = FileProvider.getUriForFile(requireContext(),
                     "rafayel.hakobyan.EatForFit.fileprovider", imageFile);
@@ -403,8 +504,16 @@ public class HomeFragment extends Fragment {
         if (layoutFistOverlay != null) layoutFistOverlay.setVisibility(View.GONE);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Loading / scanner control  ← KEY CHANGE
+    // ─────────────────────────────────────────────────────────────────────────
+
     private void setLoading(boolean loading) {
         layoutLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+        if (scannerOverlay != null) {
+            if (loading) scannerOverlay.startScanning();
+            else         scannerOverlay.stopScanning();
+        }
     }
 
     private void resetScanUI() {
@@ -417,6 +526,10 @@ public class HomeFragment extends Fragment {
         lastBase64Image   = null;
         lastAiDescription = "";
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // AI analysis  ← KEY CHANGE
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void analyzeFood(Uri imageUri) {
         setLoading(true);
@@ -439,19 +552,19 @@ public class HomeFragment extends Fragment {
                     return;
                 }
 
-                FoodDatabase.FoodInfo info = findBestMatch(identified.foodName);
-                final boolean usedAI = (info == null);
+                FoodDatabase.FoodInfo info   = findBestMatch(identified.foodName);
+                final boolean         usedAI = (info == null);
                 if (usedAI) info = askGroqForNutrition(identified.foodName);
 
                 String recommendation = askGroqForRecommendation(identified.foodName, info);
 
-                final String savedPath        = saveImagePermanently(imageUri);
-                final FoodDatabase.FoodInfo finalInfo  = info;
-                final String finalBase64      = base64;
-                final String finalDesc        = identified.description;
-                final String finalRec         = recommendation;
-                final int    finalEstGrams    = identified.estimatedGrams;
-                final boolean finalFistDetected = identified.fistDetected;
+                final String              savedPath       = saveImagePermanently(imageUri);
+                final FoodDatabase.FoodInfo finalInfo     = info;
+                final String              finalBase64     = base64;
+                final String              finalDesc       = identified.description;
+                final String              finalRec        = recommendation;
+                final int                 finalEstGrams   = identified.estimatedGrams;
+                final boolean             finalFistDet    = identified.fistDetected;
 
                 new Handler(Looper.getMainLooper()).post(() -> {
                     setLoading(false);
@@ -459,15 +572,35 @@ public class HomeFragment extends Fragment {
                     lastAiDescription = finalDesc;
 
                     if (layoutFistOverlay != null) {
-                        layoutFistOverlay.setVisibility(
-                                finalFistDetected ? View.VISIBLE : View.GONE);
+                        layoutFistOverlay.setVisibility(finalFistDet ? View.VISIBLE : View.GONE);
+                    }
+
+                    // ── 1. Crop image to food-center region ──────────────────
+                    if (photoUri != null) {
+                        try {
+                            InputStream is = requireContext().getContentResolver()
+                                    .openInputStream(photoUri);
+                            if (is != null) {
+                                Bitmap original = BitmapFactory.decodeStream(is);
+                                is.close();
+                                if (original != null) {
+                                    Bitmap cropped = cropToFood(original);
+                                    ivFoodPreview.setImageBitmap(cropped);
+                                    // Animate the food reveal
+                                    Animation anim = AnimationUtils.loadAnimation(
+                                            requireContext(), R.anim.scanner_success);
+                                    ivFoodPreview.startAnimation(anim);
+                                }
+                            }
+                        } catch (Exception ignored) {}
                     }
 
                     if (usedAI) Toast.makeText(requireContext(),
                             "AI estimated nutrition for: " + finalInfo.name,
                             Toast.LENGTH_SHORT).show();
+
                     saveAndDisplay(savedPath, finalInfo, finalBase64, finalDesc, finalRec,
-                            finalEstGrams, finalFistDetected);
+                            finalEstGrams, finalFistDet);
                 });
 
             } catch (Exception e) {
@@ -491,6 +624,10 @@ public class HomeFragment extends Fragment {
             }
         }).start();
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Groq API helpers  (unchanged from original)
+    // ─────────────────────────────────────────────────────────────────────────
 
     private IdentifyResult askGroqToIdentifyFood(String base64Image) throws Exception {
         String prompt =
@@ -523,13 +660,13 @@ public class HomeFragment extends Fragment {
             return new IdentifyResult(false, null, null, 0, false);
 
         try {
-            JSONObject obj      = new JSONObject(extractJson(raw));
-            String foodName     = obj.optString("name", raw).toLowerCase(Locale.getDefault()).trim();
-            String desc         = obj.optString("description", "");
-            int estGrams        = obj.optInt("estimated_grams", 100);
-            boolean fistDetected = obj.optBoolean("fist_detected", false);
+            JSONObject obj       = new JSONObject(extractJson(raw));
+            String     foodName  = obj.optString("name", raw).toLowerCase(Locale.getDefault()).trim();
+            String     desc      = obj.optString("description", "");
+            int        estGrams  = obj.optInt("estimated_grams", 100);
+            boolean    fistDet   = obj.optBoolean("fist_detected", false);
             if (estGrams <= 0) estGrams = 100;
-            return new IdentifyResult(true, foodName, desc, estGrams, fistDetected);
+            return new IdentifyResult(true, foodName, desc, estGrams, fistDet);
         } catch (Exception e) {
             String cleaned = raw.toLowerCase(Locale.getDefault())
                     .replaceAll("[^a-z0-9 ]", "").trim();
@@ -565,20 +702,20 @@ public class HomeFragment extends Fragment {
 
     private String askGroqForRecommendation(String foodName, FoodDatabase.FoodInfo info) {
         try {
-            SharedPreferences prefs = requireContext()
+            SharedPreferences prefs         = requireContext()
                     .getSharedPreferences(PREFS_NAME + "_" + currentUserId, Context.MODE_PRIVATE);
-            String goalWeightStr    = prefs.getString("goal_weight", "");
-            String currentWeightStr = prefs.getString("current_weight", "");
+            String            goalWeightStr = prefs.getString("goal_weight", "");
+            String            curWeightStr  = prefs.getString("current_weight", "");
 
-            if (goalWeightStr.isEmpty() && currentWeightStr.isEmpty())
+            if (goalWeightStr.isEmpty() && curWeightStr.isEmpty())
                 return getDefaultRecommendation(foodName, info);
 
             StringBuilder prompt = new StringBuilder();
             prompt.append("You are a nutrition expert. A user scanned: ").append(foodName).append(".\n");
             prompt.append("Nutrition per 100g: ").append(info.calories).append(" kcal, ");
             prompt.append(info.protein).append("g protein, ").append(info.carbs).append("g carbs, ").append(info.fats).append("g fats.\n");
-            if (!currentWeightStr.isEmpty()) prompt.append("Current weight: ").append(currentWeightStr).append(" kg.\n");
-            if (!goalWeightStr.isEmpty())    prompt.append("Goal weight: ").append(goalWeightStr).append(" kg.\n");
+            if (!curWeightStr.isEmpty())  prompt.append("Current weight: ").append(curWeightStr).append(" kg.\n");
+            if (!goalWeightStr.isEmpty()) prompt.append("Goal weight: ").append(goalWeightStr).append(" kg.\n");
             prompt.append("How many servings or portions of ").append(foodName).append(" can this person eat per day to support their goal?\n");
             prompt.append("Reply in ONE short sentence only, like: You can eat 2 apples per day to support your goal.\n");
             prompt.append("Be specific with quantity and unit (pieces, grams, cups). No extra text.");
@@ -591,12 +728,13 @@ public class HomeFragment extends Fragment {
 
     private String getDefaultRecommendation(String foodName, FoodDatabase.FoodInfo info) {
         int maxServings = info.calories > 0 ? Math.max(1, 400 / info.calories) : 2;
-        return "You can eat up to " + maxServings + " servings (100g each) of " + foodName + " per day as part of a balanced diet.";
+        return "You can eat up to " + maxServings + " servings (100g each) of "
+                + foodName + " per day as part of a balanced diet.";
     }
 
     private String askGroqChat(List<ChatMessage> history, FoodEntry entry) throws Exception {
-        JSONArray messages = new JSONArray();
-        JSONObject sys = new JSONObject();
+        JSONArray  messages = new JSONArray();
+        JSONObject sys      = new JSONObject();
         sys.put("role", "system");
         sys.put("content",
                 "You are a friendly nutrition expert and chef AI. " +
@@ -610,66 +748,66 @@ public class HomeFragment extends Fragment {
         messages.put(sys);
         for (ChatMessage msg : history) {
             JSONObject m = new JSONObject();
-            m.put("role", msg.role);
+            m.put("role",    msg.role);
             m.put("content", msg.text);
             messages.put(m);
         }
         JSONObject body = new JSONObject();
-        body.put("model", GROQ_CHAT_MODEL);
-        body.put("messages", messages);
-        body.put("max_tokens", 1024);
+        body.put("model",       GROQ_CHAT_MODEL);
+        body.put("messages",    messages);
+        body.put("max_tokens",  1024);
         body.put("temperature", 0.7);
         return parseGroqText(callGroqRaw(body.toString())).trim();
     }
 
     private String callGroqVision(String prompt, String base64Image, int maxTokens) throws Exception {
-        JSONObject imageUrlObj = new JSONObject();
+        JSONObject imageUrlObj  = new JSONObject();
         imageUrlObj.put("url", "data:image/jpeg;base64," + base64Image);
-        JSONObject imagePart = new JSONObject();
+        JSONObject imagePart    = new JSONObject();
         imagePart.put("type", "image_url");
         imagePart.put("image_url", imageUrlObj);
-        JSONObject textPart = new JSONObject();
+        JSONObject textPart     = new JSONObject();
         textPart.put("type", "text");
         textPart.put("text", prompt);
-        JSONArray contentArray = new JSONArray();
+        JSONArray  contentArray = new JSONArray();
         contentArray.put(imagePart);
         contentArray.put(textPart);
-        JSONObject userMessage = new JSONObject();
-        userMessage.put("role", "user");
+        JSONObject userMessage  = new JSONObject();
+        userMessage.put("role",    "user");
         userMessage.put("content", contentArray);
-        JSONArray messages = new JSONArray();
+        JSONArray  messages     = new JSONArray();
         messages.put(userMessage);
         JSONObject body = new JSONObject();
-        body.put("model", GROQ_VISION_MODEL);
-        body.put("messages", messages);
-        body.put("max_tokens", maxTokens);
+        body.put("model",       GROQ_VISION_MODEL);
+        body.put("messages",    messages);
+        body.put("max_tokens",  maxTokens);
         body.put("temperature", 0.2);
         return parseGroqText(callGroqRaw(body.toString()));
     }
 
     private String callGroqText(String prompt, int maxTokens) throws Exception {
         JSONObject userMessage = new JSONObject();
-        userMessage.put("role", "user");
+        userMessage.put("role",    "user");
         userMessage.put("content", prompt);
-        JSONArray messages = new JSONArray();
+        JSONArray  messages    = new JSONArray();
         messages.put(userMessage);
-        JSONObject body = new JSONObject();
-        body.put("model", GROQ_CHAT_MODEL);
-        body.put("messages", messages);
-        body.put("max_tokens", maxTokens);
+        JSONObject body        = new JSONObject();
+        body.put("model",       GROQ_CHAT_MODEL);
+        body.put("messages",    messages);
+        body.put("max_tokens",  maxTokens);
         body.put("temperature", 0.2);
         return parseGroqText(callGroqRaw(body.toString()));
     }
 
     private String callGroqRaw(String jsonBody) throws Exception {
-        android.net.ConnectivityManager cm = (android.net.ConnectivityManager)
-                requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        android.net.ConnectivityManager cm =
+                (android.net.ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         android.net.NetworkInfo ni = cm != null ? cm.getActiveNetworkInfo() : null;
         if (ni == null || !ni.isConnected()) throw new Exception("No internet connection.");
 
-        RequestBody body = RequestBody.create(jsonBody,
+        RequestBody body    = RequestBody.create(jsonBody,
                 MediaType.parse("application/json; charset=utf-8"));
-        Request request = new Request.Builder()
+        Request     request = new Request.Builder()
                 .url(GROQ_URL)
                 .addHeader("Authorization", "Bearer " + GROQ_API_KEY)
                 .addHeader("Content-Type", "application/json")
@@ -683,8 +821,8 @@ public class HomeFragment extends Fragment {
                 try {
                     JSONObject err  = new JSONObject(rb);
                     JSONObject errO = err.optJSONObject("error");
-                    String msg  = errO != null ? errO.optString("message", rb) : rb;
-                    String type = errO != null ? errO.optString("type", "") : "";
+                    String     msg  = errO != null ? errO.optString("message", rb) : rb;
+                    String     type = errO != null ? errO.optString("type", "")   : "";
                     throw new Exception("Groq " + response.code() + " [" + type + "]\n\n" + msg);
                 } catch (org.json.JSONException je) {
                     throw new Exception("Groq " + response.code() + ":\n" + rb);
@@ -715,6 +853,10 @@ public class HomeFragment extends Fragment {
         return s;
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Display / navigation
+    // ─────────────────────────────────────────────────────────────────────────
+
     private void saveAndDisplay(String savedImagePath, FoodDatabase.FoodInfo info,
                                 String base64, String description, String recommendation,
                                 int estimatedGrams, boolean fistDetected) {
@@ -727,7 +869,7 @@ public class HomeFragment extends Fragment {
         intent.putExtra(FoodResultActivity.EXTRA_PROTEIN,        info.protein);
         intent.putExtra(FoodResultActivity.EXTRA_CARBS,          info.carbs);
         intent.putExtra(FoodResultActivity.EXTRA_FATS,           info.fats);
-        intent.putExtra(FoodResultActivity.EXTRA_DESCRIPTION,    description != null ? description : "");
+        intent.putExtra(FoodResultActivity.EXTRA_DESCRIPTION,    description   != null ? description   : "");
         intent.putExtra(FoodResultActivity.EXTRA_RECOMMENDATION, recommendation != null ? recommendation : "");
         intent.putExtra(FoodResultActivity.EXTRA_EST_GRAMS,      estimatedGrams > 0 ? estimatedGrams : 100);
         intent.putExtra(FoodResultActivity.EXTRA_FIST_DETECTED,  fistDetected);
@@ -735,6 +877,10 @@ public class HomeFragment extends Fragment {
         if (getActivity() != null) getActivity().overridePendingTransition(R.anim.slide_up, 0);
         refreshHistoryUI();
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Log-serving dialog  (unchanged from original)
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void showLogServingDialog(FoodEntry entry) {
         if (getContext() == null) return;
@@ -794,8 +940,8 @@ public class HomeFragment extends Fragment {
         btnMinus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFCC5803));
         btnMinus.setCornerRadius(dpToPx(24));
 
-        final int[] portions = {1};
-        final float portionGrams = estGrams;
+        final int[]   portions    = {1};
+        final float   portionGrams= estGrams;
 
         TextView tvPortionCount = new TextView(requireContext());
         tvPortionCount.setText("1"); tvPortionCount.setTextSize(22);
@@ -823,7 +969,7 @@ public class HomeFragment extends Fragment {
                 portions[0]--;
                 tvPortionCount.setText(String.valueOf(portions[0]));
                 float totalG = portionGrams * portions[0];
-                int cal = Math.round((entry.calories * totalG) / 100f);
+                int   cal    = Math.round((entry.calories * totalG) / 100f);
                 tvPortionCalc.setText("= " + (int) totalG + "g · " + cal + " kcal");
             }
         });
@@ -831,7 +977,7 @@ public class HomeFragment extends Fragment {
             portions[0]++;
             tvPortionCount.setText(String.valueOf(portions[0]));
             float totalG = portionGrams * portions[0];
-            int cal = Math.round((entry.calories * totalG) / 100f);
+            int   cal    = Math.round((entry.calories * totalG) / 100f);
             tvPortionCalc.setText("= " + (int) totalG + "g · " + cal + " kcal");
         });
 
@@ -906,27 +1052,31 @@ public class HomeFragment extends Fragment {
         try {
             SharedPreferences prefs = requireContext()
                     .getSharedPreferences(PREFS_NAME + "_" + currentUserId, Context.MODE_PRIVATE);
-            String json = prefs.getString(KEY_HISTORY, "[]");
-            JSONArray arr = new JSONArray(json);
+            String    json     = prefs.getString(KEY_HISTORY, "[]");
+            JSONArray arr      = new JSONArray(json);
             JSONObject logEntry = new JSONObject();
-            logEntry.put("id",            UUID.randomUUID().toString());
-            logEntry.put("name",          foodName);
-            logEntry.put("emoji",         "🍽️");
-            logEntry.put("category",      "Logged");
-            logEntry.put("date",          new SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault()).format(new Date()));
-            logEntry.put("calories",      calories);
-            logEntry.put("protein",       0);
-            logEntry.put("carbs",         0);
-            logEntry.put("fats",          0);
-            logEntry.put("savedImagePath","");
-            logEntry.put("aiDescription", "");
-            logEntry.put("recommendation","");
+            logEntry.put("id",             UUID.randomUUID().toString());
+            logEntry.put("name",           foodName);
+            logEntry.put("emoji",          "🍽️");
+            logEntry.put("category",       "Logged");
+            logEntry.put("date",           new SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault()).format(new Date()));
+            logEntry.put("calories",       calories);
+            logEntry.put("protein",        0);
+            logEntry.put("carbs",          0);
+            logEntry.put("fats",           0);
+            logEntry.put("savedImagePath", "");
+            logEntry.put("aiDescription",  "");
+            logEntry.put("recommendation", "");
             JSONArray newArr = new JSONArray();
             newArr.put(logEntry);
             for (int i = 0; i < arr.length() && i < MAX_ENTRIES - 1; i++) newArr.put(arr.getJSONObject(i));
             prefs.edit().putString(KEY_HISTORY, newArr.toString()).apply();
         } catch (Exception ignored) {}
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // History UI  (unchanged from original)
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void refreshHistoryUI() {
         layoutHistoryContainer.removeAllViews();
@@ -968,7 +1118,7 @@ public class HomeFragment extends Fragment {
             if (f.exists()) {
                 Bitmap bmp = BitmapFactory.decodeFile(entry.savedImagePath);
                 if (bmp != null) img.setImageBitmap(bmp);
-                else img.setImageURI(entry.imageUri);
+                else             img.setImageURI(entry.imageUri);
             }
         } else if (entry.imageUri != null) {
             img.setImageURI(entry.imageUri);
@@ -1041,6 +1191,10 @@ public class HomeFragment extends Fragment {
         card.setOnClickListener(v -> openAiChat(entry));
         return card;
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // AI Chat dialog  (unchanged from original)
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void openAiChat(FoodEntry entry) {
         if (getContext() == null) return;
@@ -1243,6 +1397,10 @@ public class HomeFragment extends Fragment {
         return bubble;
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Food matching helpers  (unchanged from original)
+    // ─────────────────────────────────────────────────────────────────────────
+
     private static final String[] ALL_KEYS = {
             "apple","banana","orange","grapes","strawberry","watermelon","pineapple",
             "mango","peach","pear","cherry","kiwi","avocado","blueberry","lemon","coconut",
@@ -1308,41 +1466,45 @@ public class HomeFragment extends Fragment {
     private String guessEmoji(String name) {
         if (name == null) return "🍽️";
         name = name.toLowerCase(Locale.getDefault());
-        if (name.contains("pizza"))     return "🍕";
-        if (name.contains("burger"))    return "🍔";
-        if (name.contains("chicken"))   return "🍗";
-        if (name.contains("salad"))     return "🥗";
-        if (name.contains("rice"))      return "🍚";
+        if (name.contains("pizza"))                               return "🍕";
+        if (name.contains("burger"))                              return "🍔";
+        if (name.contains("chicken"))                             return "🍗";
+        if (name.contains("salad"))                               return "🥗";
+        if (name.contains("rice"))                                return "🍚";
         if (name.contains("pasta") || name.contains("spaghetti")) return "🍝";
-        if (name.contains("apple"))     return "🍎";
-        if (name.contains("banana"))    return "🍌";
-        if (name.contains("orange"))    return "🍊";
-        if (name.contains("steak") || name.contains("beef")) return "🥩";
-        if (name.contains("fish") || name.contains("salmon")) return "🐟";
-        if (name.contains("egg"))       return "🥚";
-        if (name.contains("bread"))     return "🍞";
-        if (name.contains("soup"))      return "🍜";
-        if (name.contains("cake"))      return "🎂";
-        if (name.contains("cookie"))    return "🍪";
-        if (name.contains("ice cream")) return "🍦";
-        if (name.contains("coffee"))    return "☕";
-        if (name.contains("juice"))     return "🧃";
-        if (name.contains("sandwich"))  return "🥪";
-        if (name.contains("taco"))      return "🌮";
-        if (name.contains("sushi"))     return "🍱";
-        if (name.contains("kebab") || name.contains("shawarma")) return "🥙";
-        if (name.contains("dumpling") || name.contains("khinkali")) return "🥟";
-        if (name.contains("curry"))     return "🍛";
-        if (name.contains("waffle"))    return "🧇";
-        if (name.contains("pancake"))   return "🥞";
-        if (name.contains("donut"))     return "🍩";
-        if (name.contains("tea"))       return "🍵";
-        if (name.contains("cheese"))    return "🧀";
-        if (name.contains("shrimp"))    return "🦐";
-        if (name.contains("hot dog"))   return "🌭";
-        if (name.contains("fries"))     return "🍟";
+        if (name.contains("apple"))                               return "🍎";
+        if (name.contains("banana"))                              return "🍌";
+        if (name.contains("orange"))                              return "🍊";
+        if (name.contains("steak") || name.contains("beef"))      return "🥩";
+        if (name.contains("fish") || name.contains("salmon"))     return "🐟";
+        if (name.contains("egg"))                                  return "🥚";
+        if (name.contains("bread"))                                return "🍞";
+        if (name.contains("soup"))                                 return "🍜";
+        if (name.contains("cake"))                                 return "🎂";
+        if (name.contains("cookie"))                               return "🍪";
+        if (name.contains("ice cream"))                            return "🍦";
+        if (name.contains("coffee"))                               return "☕";
+        if (name.contains("juice"))                                return "🧃";
+        if (name.contains("sandwich"))                             return "🥪";
+        if (name.contains("taco"))                                 return "🌮";
+        if (name.contains("sushi"))                                return "🍱";
+        if (name.contains("kebab") || name.contains("shawarma"))   return "🥙";
+        if (name.contains("dumpling") || name.contains("khinkali"))return "🥟";
+        if (name.contains("curry"))                                return "🍛";
+        if (name.contains("waffle"))                               return "🧇";
+        if (name.contains("pancake"))                              return "🥞";
+        if (name.contains("donut"))                                return "🍩";
+        if (name.contains("tea"))                                   return "🍵";
+        if (name.contains("cheese"))                               return "🧀";
+        if (name.contains("shrimp"))                               return "🦐";
+        if (name.contains("hot dog"))                              return "🌭";
+        if (name.contains("fries"))                                return "🍟";
         return "🍽️";
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Calorie arc  (unchanged from original)
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void loadTodayCalories() {
         if (!isAdded()) return;
@@ -1350,15 +1512,15 @@ public class HomeFragment extends Fragment {
             SharedPreferences prefs = requireContext()
                     .getSharedPreferences(PREFS_NAME + "_" + currentUserId, Context.MODE_PRIVATE);
             dailyCalorieGoal = prefs.getInt("daily_calorie_goal", 2000);
-            String json = prefs.getString(KEY_HISTORY, null);
-            int totalConsumed = 0;
+            String json      = prefs.getString(KEY_HISTORY, null);
+            int    totalConsumed = 0;
             if (json != null && !json.isEmpty()) {
-                String today = new SimpleDateFormat("dd MMM", Locale.getDefault()).format(new Date());
-                JSONArray arr = new JSONArray(json);
+                String    today = new SimpleDateFormat("dd MMM", Locale.getDefault()).format(new Date());
+                JSONArray arr   = new JSONArray(json);
                 for (int i = 0; i < arr.length(); i++) {
-                    JSONObject entry = arr.getJSONObject(i);
-                    String date = entry.optString("date", "");
-                    if (date.startsWith(today)) totalConsumed += entry.optInt("calories", 0);
+                    JSONObject e = arr.getJSONObject(i);
+                    if (e.optString("date", "").startsWith(today))
+                        totalConsumed += e.optInt("calories", 0);
                 }
             }
             updateCalorieArc(totalConsumed);
@@ -1380,12 +1542,12 @@ public class HomeFragment extends Fragment {
             }
         }
         if (homeTvCaloriesLabel != null) {
-            float pct = dailyCalorieGoal > 0 ? (float) consumed / dailyCalorieGoal : 0f;
+            float  pct   = dailyCalorieGoal > 0 ? (float) consumed / dailyCalorieGoal : 0f;
             String label; int color;
-            if (consumed == 0) { label = "No food logged today"; color = 0xFF2196F3; }
-            else if (pct < 0.60f) { label = "Keep eating! Under 60% of your goal"; color = 0xFFE53935; }
-            else if (pct < 1.0f) { label = "Great progress! Almost at your goal"; color = 0xFFFFC107; }
-            else { label = "🎉 Daily calorie goal reached!"; color = 0xFF4CAF50; }
+            if (consumed == 0)      { label = "No food logged today";              color = 0xFF2196F3; }
+            else if (pct < 0.60f)   { label = "Keep eating! Under 60% of your goal"; color = 0xFFE53935; }
+            else if (pct < 1.0f)    { label = "Great progress! Almost at your goal"; color = 0xFFFFC107; }
+            else                    { label = "🎉 Daily calorie goal reached!";      color = 0xFF4CAF50; }
             homeTvCaloriesLabel.setText(label);
             homeTvCaloriesLabel.setTextColor(color);
         }

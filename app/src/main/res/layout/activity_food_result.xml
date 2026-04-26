@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF5E6"
+    android:background="#F8F0E8"
     android:fillViewport="true">
 
     <LinearLayout
@@ -12,9 +12,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- ══════════════════════════════════════════════════════════
+             HERO — full-bleed photo with gradient overlay + food name
+             ══════════════════════════════════════════════════════════ -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="280dp">
+            android:layout_height="320dp">
 
             <ImageView
                 android:id="@+id/ivFoodPhoto"
@@ -22,148 +25,298 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"/>
 
+            <!-- Bottom gradient -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#88000000"/>
+                android:layout_height="200dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/gradient_bottom_dark"/>
 
+            <!-- Top bar (close + badge) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="48dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp">
+
+                <ImageButton
+                    android:id="@+id/btnClose"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="#55000000"
+                    android:contentDescription="Close"
+                    android:padding="8dp"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    tools:ignore="TouchTargetSizeCheck"/>
+
+                <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
+
+                <!-- Calorie badge (top-right) -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="#CC000000"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:gravity="center_vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔥 "
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvHeroCalories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFB627"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" kcal"
+                        android:textSize="11sp"
+                        android:textColor="#CCFFFFFF"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Food name overlay at bottom -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="20dp">
 
-                <TextView
-                    android:id="@+id/tvResultEmoji"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="42sp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="4dp">
 
-                <TextView
-                    android:id="@+id/tvResultFoodName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"/>
+                    <TextView
+                        android:id="@+id/tvResultEmoji"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="36sp"
+                        android:layout_marginEnd="8dp"/>
 
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvResultFoodName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="26sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:shadowColor="#000000"
+                            android:shadowDx="0"
+                            android:shadowDy="2"
+                            android:shadowRadius="6"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:id="@+id/tvResultCategory"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="12sp"
+                                android:textColor="#DDFFFFFF"
+                                android:background="#44FFFFFF"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="2dp"/>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- AI description -->
                 <TextView
-                    android:id="@+id/tvResultCategory"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvResultDescription"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="#CCFFFFFF"
-                    android:layout_marginTop="2dp"/>
+                    android:lineSpacingExtra="2dp"
+                    android:visibility="gone"/>
+
             </LinearLayout>
-
-            <android.widget.ImageButton
-                android:id="@+id/btnClose"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:layout_gravity="top|end"
-                android:layout_margin="16dp"
-                android:background="#88000000"
-                android:contentDescription="Close"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                tools:ignore="TouchTargetSizeCheck" />
-
         </FrameLayout>
 
+        <!-- ══════════════════════════════════════════════════════════
+             MACRO STRIP — 4 pill cards in a row
+             ══════════════════════════════════════════════════════════ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:paddingHorizontal="14dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="4dp">
 
-            <androidx.cardview.widget.CardView
+            <!-- Calories -->
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="#FFFFFF">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔥" android:textSize="22sp"/>
-                    <TextView android:id="@+id/tvResultCalories" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15sp" android:textStyle="bold" android:textColor="@color/bronze_spice"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="kcal total" android:textSize="10sp" android:textColor="#888888"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:elevation="3dp">
 
-            <androidx.cardview.widget.CardView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔥"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/tvResultCalories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#CC5803"
+                    android:layout_marginTop="2dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="kcal"
+                    android:textSize="9sp"
+                    android:textColor="#AAAAAA"/>
+            </LinearLayout>
+
+            <!-- Protein -->
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="#FFFFFF">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="💪" android:textSize="22sp"/>
-                    <TextView android:id="@+id/tvResultProtein" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15sp" android:textStyle="bold" android:textColor="@color/bronze_spice"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="protein total" android:textSize="10sp" android:textColor="#888888"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:elevation="3dp">
 
-            <androidx.cardview.widget.CardView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💪"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/tvResultProtein"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#CC5803"
+                    android:layout_marginTop="2dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="protein"
+                    android:textSize="9sp"
+                    android:textColor="#AAAAAA"/>
+            </LinearLayout>
+
+            <!-- Carbs -->
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="#FFFFFF">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🌾" android:textSize="22sp"/>
-                    <TextView android:id="@+id/tvResultCarbs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15sp" android:textStyle="bold" android:textColor="@color/chocolate"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="carbs total" android:textSize="10sp" android:textColor="#888888"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:elevation="3dp">
 
-            <androidx.cardview.widget.CardView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🌾"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/tvResultCarbs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#E2711D"
+                    android:layout_marginTop="2dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="carbs"
+                    android:textSize="9sp"
+                    android:textColor="#AAAAAA"/>
+            </LinearLayout>
+
+            <!-- Fats -->
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="#FFFFFF">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🫙" android:textSize="22sp"/>
-                    <TextView android:id="@+id/tvResultFats" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15sp" android:textStyle="bold" android:textColor="@color/deep_saffron"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="fats total" android:textSize="10sp" android:textColor="#888888"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:elevation="3dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🫙"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/tvResultFats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF9505"
+                    android:layout_marginTop="2dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="fats"
+                    android:textSize="9sp"
+                    android:textColor="#AAAAAA"/>
+            </LinearLayout>
 
         </LinearLayout>
 
+        <!-- ══════════════════════════════════════════════════════════
+             MACRO BAR — visual progress bars
+             ══════════════════════════════════════════════════════════ -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="3dp"
             app:cardBackgroundColor="#FFFFFF">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -171,39 +324,352 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/tvResultDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MACRO BREAKDOWN"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.14"
+                    android:textStyle="bold"
+                    android:textColor="#BCAAA4"
+                    android:layout_marginBottom="14dp"/>
+
+                <!-- Protein bar -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:textColor="#555555"
-                    android:lineSpacingExtra="3dp"
-                    android:visibility="gone"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="Protein"
+                        android:textSize="12sp"
+                        android:textColor="#555555"/>
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="8dp"
+                        android:layout_weight="1"
+                        android:background="#EEE8E0"
+                        android:layout_marginHorizontal="8dp">
+                        <View
+                            android:id="@+id/barProtein"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="#CC5803"/>
+                    </FrameLayout>
+                    <TextView
+                        android:id="@+id/tvBarProteinPct"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="11sp"
+                        android:textColor="#CC5803"
+                        android:textStyle="bold"
+                        android:gravity="end"/>
+                </LinearLayout>
+
+                <!-- Carbs bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="Carbs"
+                        android:textSize="12sp"
+                        android:textColor="#555555"/>
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="8dp"
+                        android:layout_weight="1"
+                        android:background="#EEE8E0"
+                        android:layout_marginHorizontal="8dp">
+                        <View
+                            android:id="@+id/barCarbs"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="#E2711D"/>
+                    </FrameLayout>
+                    <TextView
+                        android:id="@+id/tvBarCarbsPct"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="11sp"
+                        android:textColor="#E2711D"
+                        android:textStyle="bold"
+                        android:gravity="end"/>
+                </LinearLayout>
+
+                <!-- Fats bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="Fats"
+                        android:textSize="12sp"
+                        android:textColor="#555555"/>
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="8dp"
+                        android:layout_weight="1"
+                        android:background="#EEE8E0"
+                        android:layout_marginHorizontal="8dp">
+                        <View
+                            android:id="@+id/barFats"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="#FF9505"/>
+                    </FrameLayout>
+                    <TextView
+                        android:id="@+id/tvBarFatsPct"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="11sp"
+                        android:textColor="#FF9505"
+                        android:textStyle="bold"
+                        android:gravity="end"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ══════════════════════════════════════════════════════════
+             AI RECOMMENDATION card
+             ══════════════════════════════════════════════════════════ -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Header row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="10dp">
+
+                    <LinearLayout
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:gravity="center"
+                        android:background="#FFF0D6">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🎯"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="AI Recommendation"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#CC5803"
+                        android:layout_marginStart="10dp"/>
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvResultRecommendation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="13sp"
-                    android:textColor="@color/bronze_spice"
+                    android:textColor="#444444"
+                    android:lineSpacingExtra="4dp"
+                    android:background="#FFF8F0"
+                    android:padding="12dp"
+                    android:visibility="gone"/>
+
+                <!-- AI portion estimate chip -->
+                <TextView
+                    android:id="@+id/tvAiPortions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="#2E7D32"
                     android:textStyle="bold"
-                    android:background="#FFF0D6"
+                    android:background="#E8F5E9"
                     android:padding="10dp"
                     android:layout_marginTop="8dp"
-                    android:lineSpacingExtra="3dp"
-                    android:visibility="gone"/>
+                    android:lineSpacingExtra="2dp"/>
+
+                <!-- Fist tip (shown when fist NOT detected) -->
+                <LinearLayout
+                    android:id="@+id/layoutFistTip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="#FFF8E1"
+                    android:padding="10dp"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✊"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="8dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Pro tip: place your fist next to the food next time — helps AI estimate real portion size."
+                        android:textSize="11sp"
+                        android:textColor="#795548"
+                        android:lineSpacingExtra="2dp"/>
+
+                </LinearLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- ══════════════════════════════════════════════════════════
+             MEAL SLOT selector
+             ══════════════════════════════════════════════════════════ -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginBottom="10dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="3dp"
             app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ADD TO MEAL"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.14"
+                    android:textStyle="bold"
+                    android:textColor="#BCAAA4"
+                    android:layout_marginBottom="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSlotBreakfast"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="🌅"
+                        android:textAllCaps="false"
+                        android:textSize="18sp"
+                        app:backgroundTint="@color/bronze_spice"
+                        app:cornerRadius="12dp"
+                        tools:ignore="TouchTargetSizeCheck"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSlotLunch"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="☀️"
+                        android:textAllCaps="false"
+                        android:textColor="@color/bronze_spice"
+                        android:textSize="18sp"
+                        app:backgroundTint="#FFF5E6D0"
+                        app:cornerRadius="12dp"
+                        tools:ignore="TouchTargetSizeCheck"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSlotDinner"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="🌙"
+                        android:textAllCaps="false"
+                        android:textColor="@color/bronze_spice"
+                        android:textSize="18sp"
+                        app:backgroundTint="#FFF5E6D0"
+                        app:cornerRadius="12dp"
+                        tools:ignore="TouchTargetSizeCheck"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSlotSnacks"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="🍎"
+                        android:textAllCaps="false"
+                        android:textColor="@color/bronze_spice"
+                        android:textSize="18sp"
+                        app:backgroundTint="#FFF5E6D0"
+                        app:cornerRadius="12dp"
+                        tools:ignore="TouchTargetSizeCheck"/>
+
+                </LinearLayout>
+
+                <!-- Selected slot label -->
+                <TextView
+                    android:id="@+id/tvSelectedSlotLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🌅 Breakfast selected"
+                    android:textSize="12sp"
+                    android:textColor="#CC5803"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ══════════════════════════════════════════════════════════
+             PORTION SELECTOR card
+             ══════════════════════════════════════════════════════════ -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="#FFFFFF">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -214,65 +680,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="HOW MUCH WILL YOU EAT?"
-                    android:textSize="11sp"
-                    android:letterSpacing="0.1"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.14"
                     android:textStyle="bold"
                     android:textColor="#BCAAA4"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="14dp"/>
 
-                <TextView
-                    android:id="@+id/tvAiPortions"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:textColor="#4CAF50"
-                    android:textStyle="bold"
-                    android:background="#E8F5E9"
-                    android:padding="8dp"
-                    android:layout_marginBottom="10dp"
-                    android:lineSpacingExtra="2dp"/>
-
-                <LinearLayout
-                    android:id="@+id/layoutFistTip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="#FFF8E1"
-                    android:padding="10dp"
-                    android:layout_marginBottom="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✊"
-                        android:textSize="20sp"
-                        android:layout_marginEnd="8dp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Tip: next time place your fist next to the food — it helps AI estimate the real portion size more accurately."
-                        android:textSize="11sp"
-                        android:textColor="#795548"
-                        android:lineSpacingExtra="2dp"/>
-
-                </LinearLayout>
-
+                <!-- Portion stepper -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="12dp">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPortionMinus"
                         android:layout_width="52dp"
                         android:layout_height="52dp"
                         android:text="−"
-                        android:textSize="22sp"
+                        android:textSize="24sp"
                         android:textColor="#FFFFFF"
                         android:padding="0dp"
                         android:insetTop="0dp"
@@ -286,24 +713,23 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="8dp">
+                        android:gravity="center">
 
                         <TextView
                             android:id="@+id/tvPortionCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1"
-                            android:textSize="32sp"
+                            android:textSize="38sp"
                             android:textStyle="bold"
                             android:textColor="@color/bronze_spice"/>
 
                         <TextView
-                            android:id="@+id/tvPortionCalc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="12sp"
-                            android:textColor="#888888"/>
+                            android:text="portion(s)"
+                            android:textSize="11sp"
+                            android:textColor="#AAAAAA"/>
 
                     </LinearLayout>
 
@@ -312,7 +738,7 @@
                         android:layout_width="52dp"
                         android:layout_height="52dp"
                         android:text="+"
-                        android:textSize="22sp"
+                        android:textSize="24sp"
                         android:textColor="#FFFFFF"
                         android:padding="0dp"
                         android:insetTop="0dp"
@@ -323,14 +749,39 @@
 
                 </LinearLayout>
 
+                <!-- Live calc summary -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="#FFF0D6"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/tvPortionCalc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="13sp"
+                        android:textColor="#CC5803"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:lineSpacingExtra="2dp"/>
+
+                </LinearLayout>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- ══════════════════════════════════════════════════════════
+             CTA buttons
+             ══════════════════════════════════════════════════════════ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:paddingHorizontal="14dp"
+            android:paddingBottom="8dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSkip"
@@ -341,6 +792,7 @@
                 android:text="Skip"
                 android:textAllCaps="false"
                 android:textColor="@color/bronze_spice"
+                android:textSize="15sp"
                 app:cornerRadius="28dp"
                 app:strokeColor="@color/bronze_spice"
                 app:strokeWidth="2dp"
@@ -352,16 +804,17 @@
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_weight="2"
-                android:text="🍽️  I Ate This!"
+                android:text="🍽️  Log It!"
                 android:textAllCaps="false"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
+                android:textSize="16sp"
                 app:cornerRadius="28dp"
                 app:backgroundTint="@color/bronze_spice"/>
 
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="16dp"/>
+        <View android:layout_width="match_parent" android:layout_height="20dp"/>
 
     </LinearLayout>
 </ScrollView>
