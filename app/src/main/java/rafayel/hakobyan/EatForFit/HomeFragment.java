@@ -69,7 +69,6 @@ import okhttp3.Response;
 
 public class HomeFragment extends Fragment {
 
-    int i = 100;
     private static final String GROQ_API_KEY      = "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";
     private static final String GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
     private static final String GROQ_CHAT_MODEL   = "llama-3.3-70b-versatile";
